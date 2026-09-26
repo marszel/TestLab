@@ -37,54 +37,30 @@ def verify_product_visible(page, product_name):
     products = page.locator(".inventory_item_name").all_text_contents()
     assert product_name in products
 
-#Test 1 - Verify successful login
-
-
-with sync_playwright() as p:
-    browser = p.chromium.launch(headless=False)
-
-    page = browser.new_page()
+def test_succesful_login(page):
     page.goto(URL)
-
     login(page, "standard_user", "secret_sauce")
-
-    page.wait_for_timeout(1000)
-
-    print(page.title())
-    print(page.url)
-
     assert page.url == "https://www.saucedemo.com/inventory.html"
 
-    browser.close()
+def test_products_are_displayed(page):
+    page.goto(URL)
+    login(page, "standard_user", "secret_sauce")
+    page.wait_for_timeout(1000)
+    verify_product_count(page, 6)
+    verify_product_visible(page, "Sauce Labs Backpack")
+    add_backpack_to_cart(page)
+    cart_badge = page.locator(".shopping_cart_badge")
+    assert cart_badge.text_content() == "1"
+    open_cart(page)
+    verify_backpack_in_cart(page)
+    remove_backpack_from_cart(page)
+    verify_empty_cart(page)
+
+#Test 1 - Verify successful login
+
 
 
 #Test 2 - Verify products are displayed
 
-with sync_playwright() as p:
-    browser = p.chromium.launch(headless=False)
 
-    page = browser.new_page()
-    page.goto(URL)
-
-    login(page, "standard_user", "secret_sauce")
-
-    page.wait_for_timeout(1000)
-    verify_product_count(page, 6)
-
-    verify_product_visible(page, "Sauce Labs Backpack")
-
-    add_backpack_to_cart(page)
-    cart_badge = page.locator(".shopping_cart_badge")
-
-    assert cart_badge.text_content() == "1"
-
-    open_cart(page)
-    verify_backpack_in_cart(page)
-
-    remove_backpack_from_cart(page)
-
-    verify_empty_cart(page)
-
-
-    browser.close()
 
