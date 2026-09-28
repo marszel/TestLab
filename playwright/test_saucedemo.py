@@ -1,6 +1,7 @@
 #Imports
 
 from playwright.sync_api import sync_playwright
+import pytest
 
 #Test Data
 
@@ -14,10 +15,10 @@ def login(page, username, password):
     page.locator("#login-button").click()
 
 def add_product_to_cart(page, product_id_name):
-    page.locator(f"#add-to-cart-{product_id_name}").click()
+    page.locator(f"[data-test='add-to-cart-{product_id_name}']").click()
 
 def remove_product_from_cart(page, product_id_name):
-    page.locator(f"#remove-{product_id_name}").click()
+    page.locator(f"[data-test='remove-{product_id_name}']").click()
 
 def open_cart(page):
     page.locator("a.shopping_cart_link").click()
@@ -47,9 +48,17 @@ def test_locked_out_user_login(page):
     login(page, "locked_out_user", "secret_sauce")
     assert page.locator("[data-test='error']").text_content() == "Epic sadface: Sorry, this user has been locked out."
 
-def test_add_and_remove_product_from_cart(page):
-    product_name = "Sauce Labs Bolt T-Shirt"
-    product_id = "sauce-labs-bolt-t-shirt"
+@pytest.mark.parametrize("name_from_list, id_from_list", [
+    ("Sauce Labs Backpack", "sauce-labs-backpack"),
+    ("Sauce Labs Bolt T-Shirt", "sauce-labs-bolt-t-shirt"),
+    ("Sauce Labs Bike Light", "sauce-labs-bike-light"),
+    ("Sauce Labs Fleece Jacket", "sauce-labs-fleece-jacket"),
+    ("Sauce Labs Onesie", "sauce-labs-onesie"),
+    ("Test.allTheThings() T-Shirt (Red)", "test.allthethings()-t-shirt-(red)")
+])
+def test_add_and_remove_product_from_cart(page, name_from_list, id_from_list):
+    product_name = name_from_list
+    product_id = id_from_list
     page.goto(URL)
     login(page, "standard_user", "secret_sauce")
     page.wait_for_timeout(1000)
