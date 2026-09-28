@@ -7,4 +7,4 @@ Personal learning project focused on:
 -SQL
 -Test Automation
 
-TestLab is a sample aplication used for learning test automation concepts and building practical QA skills. 
+TestLab is a sample application used for learning test automation concepts and building practical QA skills.

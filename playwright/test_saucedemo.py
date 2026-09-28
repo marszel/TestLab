@@ -56,11 +56,10 @@ def test_products_are_displayed(page):
     remove_backpack_from_cart(page)
     verify_empty_cart(page)
 
-#Test 1 - Verify successful login
-
-
-
-#Test 2 - Verify products are displayed
-
-
+def test_locked_out_user_login(page):
+    page.goto(URL)
+    page.locator('#user-name').fill("locked_out_user")
+    page.locator('#password').fill("secret_sauce")
+    page.locator("#login-button").click()
+    assert page.locator("[data-test='error']").text_content() == "Epic sadface: Sorry, this user has been locked out."
 
